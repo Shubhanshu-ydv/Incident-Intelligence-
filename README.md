@@ -244,64 +244,154 @@ If Groq API is unavailable or key is missing:
 | Node.js | 18+ | Frontend build |
 | WSL2 (Windows) | Ubuntu | Pathway runtime |
 | Groq API Key | - | LLM inference |
+| Supabase Account | - | Database |
 
-### Environment Configuration
+### Step-by-Step Setup
+
+#### 1. Clone the Repository
+```bash
+git clone https://github.com/Shubhanshu-ydv/Incident-Intelligence-.git
+cd Incident-Intelligence-
+```
+
+#### 2. Get Your API Keys
+
+**Groq API Key** (Required for AI features)
+1. Go to https://console.groq.com
+2. Sign up/login
+3. Navigate to "API Keys"
+4. Create a new key
+5. Copy the key (starts with `gsk_`)
+
+**Supabase Credentials** (Required for database)
+1. Go to https://supabase.com
+2. Create a new project
+3. Go to Project Settings → API
+4. Copy your `Project URL` and `anon/public` key
+
+#### 3. Configure Environment Variables
 
 Create a `.env` file in the project root:
 
 ```env
-# Required: Supabase connection
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
+# Supabase Configuration
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key
 
-# Required for AI features: Groq API
-GROQ_API_KEY=your_groq_api_key
+# Groq API Key (Required for AI)
+GROQ_API_KEY=gsk_your_groq_api_key_here
 ```
 
-### Quick Start (Windows with WSL2)
+**Windows Users**: Also set as system environment variable (recommended):
+1. Search "Environment Variables" in Windows
+2. Add new User Variable: `GROQ_API_KEY` = `your_key_here`
+3. Restart your terminal
+
+#### 4. Install Python Dependencies (Windows)
 
 ```bash
-# 1. Clone and enter directory
-cd incident-intelligence
+# Create virtual environment
+python -m venv .venv
 
-# 2. Run the startup script
-./start.bat
+# Activate it
+.venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-This starts all three services:
-- Pathway RAG Pipeline (port 8081)
-- FastAPI Backend (port 8000)
-- React Frontend (port 5173)
+#### 5. Install Frontend Dependencies
 
-### Manual Start (Step by Step)
-
-**Terminal 1: Pathway (in WSL2/Ubuntu)**
 ```bash
+cd ui
+npm install
+cd ..
+```
+
+#### 6. Setup Pathway in WSL2
+
+```bash
+# Install WSL2 if not already installed
+wsl --install
+
+# Enter WSL Ubuntu
+wsl -d Ubuntu
+
+# Create and activate Python virtual environment
+python3 -m venv ~/pathway-env
+source ~/pathway-env/bin/activate
+
+# Install Pathway dependencies
+pip install -r pathway/requirements.txt
+
+# Exit WSL
+exit
+```
+
+#### 7. Run the Application
+
+**Option A: Using the startup script (Recommended)**
+```bash
+# Make sure GROQ_API_KEY is set as environment variable
+# Then run:
+start.bat
+```
+
+**Option B: Manual start (3 terminals)**
+
+**Terminal 1 - Pathway (WSL):**
+```bash
+wsl -d Ubuntu
 source ~/pathway-env/bin/activate
 export GROQ_API_KEY=your_key_here
 cd pathway
 python app.py
 ```
 
-**Terminal 2: FastAPI (Windows or WSL2)**
+**Terminal 2 - FastAPI (Windows):**
 ```bash
-.venv\Scripts\activate  # Windows
+.venv\Scripts\activate
 python server.py
 ```
 
-**Terminal 3: React Frontend**
+**Terminal 3 - React (Windows):**
 ```bash
 cd ui
-npm install
 npm run dev
 ```
 
 ### Verification
 
 Open http://localhost:5173 and verify:
-- Dashboard loads with incident list
-- Live Updates section shows recent changes
-- AI Chat responds to queries
+- ✅ Dashboard loads with incident list
+- ✅ Live Updates section shows recent changes
+- ✅ AI Chat responds to queries
+- ✅ You can create/edit/delete incidents
+
+### Services Running
+
+| Service | Port | URL |
+|---------|------|-----|
+| React Frontend | 5173 | http://localhost:5173 |
+| FastAPI Backend | 8000 | http://localhost:8000/docs |
+| Pathway RAG | 8081 | http://localhost:8081 |
+
+### Troubleshooting
+
+**Issue**: "WSL2 not found"
+- Run `wsl --install` and restart your computer
+
+**Issue**: "GROQ_API_KEY not set"
+- Make sure you set it as environment variable or in `.env`
+- For start.bat: `$env:GROQ_API_KEY="your_key"` before running
+
+**Issue**: "Module not found" errors
+- Ensure all dependencies are installed (Steps 4, 5, 6)
+- Check you're in the correct virtual environment
+
+**Issue**: "Cannot connect to Supabase"
+- Verify your `.env` file has correct credentials
+- Check your Supabase project is active
 
 ---
 
