@@ -20,6 +20,8 @@ echo ✓ WSL2 detected
 echo.
 
 echo [1/3] Starting Pathway RAG Pipeline (WSL2 Ubuntu - Port 8081)...
+REM Read GROQ_API_KEY from .env file
+for /f "tokens=2 delims==" %%a in ('findstr "GROQ_API_KEY" .env') do set GROQ_API_KEY=%%a
 start "Pathway RAG Pipeline" wsl -d Ubuntu -- bash -c "export GROQ_API_KEY=%GROQ_API_KEY% && source ~/pathway-env/bin/activate && cd /mnt/c/Users/shubh/Downloads/shubh/pathway && python app.py"
 
 REM Wait for Pathway to initialize
