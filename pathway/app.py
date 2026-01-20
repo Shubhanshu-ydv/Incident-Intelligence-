@@ -71,7 +71,8 @@ def fetch_incidents_from_supabase() -> List[Dict[str, Any]]:
         }
         params = {
             "select": "*",
-            "order": "timestamp.desc",
+            "order": "created_at.desc",  # Order by when added to DB, not incident timestamp
+            "limit": "1000",  # Explicit high limit to get all incidents
             "deleted_at": "is.null"  # Exclude soft-deleted incidents
         }
         
