@@ -9,6 +9,7 @@ $sources:
   - !pw.io.fs.read
     path: /home/shubh/pathway-cache
     format: binary
+    mode: streaming  # Enable auto-detection of new files
     with_metadata: true
 
 # ============================================================
