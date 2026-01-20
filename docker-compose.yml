@@ -1,0 +1,86 @@
+# Incident Intelligence - Docker Compose Setup
+# This file provides an alternative way to run the entire stack using Docker
+# Suitable for judges/evaluators who want quick setup without WSL2
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database (replacing Supabase for local development)
+  postgres:
+    image: postgres:15-alpine
+    container_name: incident_postgres
+    environment:
+      POSTGRES_DB: incident_intelligence
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: incident_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    volumes:
+      - ./server.py:/app/server.py
+      - ./requirements.txt:/app/requirements.txt
+    depends_on:
+      - postgres
+    command: uvicorn server:app --host 0.0.0.0 --port 8000 --reload
+
+  # Pathway RAG Pipeline
+  pathway:
+    build:
+      context: ./pathway
+      dockerfile: Dockerfile.pathway
+    container_name: incident_pathway
+    ports:
+      - "8081:8081"
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+    volumes:
+      - ./pathway:/app
+    depends_on:
+      - postgres
+    command: python app.py
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile.frontend
+    container_name: incident_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./ui/src:/app/src
+      - ./ui/public:/app/public
+    depends_on:
+      - backend
+      - pathway
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    command: npm run dev -- --host 0.0.0.0
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    name: incident_intelligence_network

@@ -6,6 +6,59 @@ A real-time incident management platform powered by streaming RAG (Retrieval-Aug
 
 ---
 
+## ⚡ Quick Start (2 Minutes)
+
+**Prerequisites**: Python 3.10+, Node.js 18+, WSL2 (Windows), [Groq API Key](https://console.groq.com), [Supabase Project](https://supabase.com)
+
+```bash
+# 1. Clone repository
+git clone https://github.com/Shubhanshu-ydv/Incident-Intelligence-.git
+cd Incident-Intelligence-
+
+# 2. Create .env from .env.example and fill in your API keys
+cp .env.example .env
+
+# 3. Terminal 1: Pathway (WSL2)
+wsl -d Ubuntu
+python3 -m venv ~/pathway-env && source ~/pathway-env/bin/activate
+pip install -r pathway/requirements.txt
+export GROQ_API_KEY=your_key_here
+cd pathway && python app.py
+
+# 4. Terminal 2: FastAPI (Windows)
+python -m venv .venv && .venv\Scripts\activate
+pip install -r requirements.txt
+python server.py
+
+# 5. Terminal 3: Frontend (Windows)
+cd ui && npm install && npm run dev
+
+# ✅ Visit http://localhost:5173
+```
+
+**Docker Alternative** (No WSL2 needed):
+```bash
+docker-compose up
+```
+
+---
+
+## 🎯 Judge Quick Notes
+
+| Aspect | Details |
+|--------|---------|
+| **Real-Time** | ✅ Yes — Pathway polls Supabase every 5s, no manual reindexing |
+| **AI Context** | ✅ Transparent — Shows context size and data sources |
+| **LLM** | Groq Cloud (Llama 3.3 70B) — No local GPU required |
+| **Fallback** | ✅ CRUD and search work without Groq API |
+| **Streaming** | ✅ Incremental updates, no server restart needed |
+| **Data Flow** | React → FastAPI → Pathway → Groq + Supabase |
+| **Demo Time** | ~2 minutes to see real-time sync in action |
+
+**Key Differentiator**: Traditional RAG requires manual reindexing after data changes. This system automatically updates the AI knowledge base through streaming — create an incident, ask AI about it within 5 seconds.
+
+---
+
 ## Problem Statement
 
 Organizations managing infrastructure, IT systems, or physical facilities face a critical challenge: incidents occur continuously, but traditional monitoring dashboards require manual analysis to identify patterns, root causes, and correlations.
