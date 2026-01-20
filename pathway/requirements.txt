@@ -1,0 +1,18 @@
+# Real Pathway RAG Pipeline Requirements
+# Run in WSL2 Ubuntu with: pip install -r requirements.txt
+
+# Core Pathway (REAL - Linux/macOS only)
+pathway[all]
+
+# LLM Integration
+litellm>=1.0.0
+
+# Embeddings
+sentence-transformers>=2.2.0
+
+# HTTP/API
+requests>=2.28.0
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+

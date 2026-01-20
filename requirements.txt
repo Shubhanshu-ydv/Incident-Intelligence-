@@ -1,0 +1,17 @@
+# Incident Intelligence - FastAPI Dependencies
+# =============================================
+# API layer with Supabase CRUD + Pathway RAG proxy
+
+# Web Framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+
+# HTTP Client (for Pathway proxy + Supabase REST API)
+requests>=2.28.0
+
+# Environment
+python-dotenv>=1.0.0
+
+# WebSocket support
+websockets>=12.0
+
